@@ -857,7 +857,7 @@ const noHScroll = (page) => page.evaluate(() => document.documentElement.scrollW
     // Watch Power Lab: failure freshness, incremental simulation and recorded replay.
     {
       let failed = false, liveLoad = 1730;
-      const page = await newPage(browser, { prefs: {batteryAh:200}, api: (a) => a === 'queryDeviceLastData' ? (failed ? 'abort' : {err:0,dat:points(Date.now()-2*60000,{'AC Output Active Power':String(liveLoad)})}) : null });
+      const page = await newPage(browser, { prefs: {batteryAh:200}, storage: {devPollSec:5}, api: (a) => a === 'queryDeviceLastData' ? (failed ? 'abort' : {err:0,dat:points(Date.now()-2*60000,{'AC Output Active Power':String(liveLoad)})}) : null });
       await page.waitForSelector('.flow-card');
       await page.evaluate(() => window.__nav('more','calc'));
       await page.waitForSelector('#simResult');
@@ -865,7 +865,7 @@ const noHScroll = (page) => page.evaluate(() => document.documentElement.scrollW
       check('المحاكاة تحسب القدرة والمدة بأرقام عربية', (await text(page,'#simResult')).includes('1800') === false && (await text(page,'#simResult')).includes('1.80') && (await text(page,'#simResult')).includes('2630.00'));
       await page.check('#simAlreadyOn');
       check('الجهاز المشمول في الحمل لا يُحتسب مرتين', (await text(page,'#simResult')).includes('1730.00') && (await text(page,'[data-sim-value=addedW]')) === '0.00');
-      liveLoad=1800; await page.click('#refreshBtn'); await page.waitForTimeout(300);
+      liveLoad=1800; await page.waitForFunction(() => document.querySelector('[data-sim-value=totalW]')?.textContent === '1800.00', {timeout:10000});
       check('المحاكاة تعيد الحساب عند وصول حمل أحدث', (await text(page,'[data-sim-value=totalW]')) === '1800.00');
       await page.fill('#simMinutes','-1');
       check('المحاكاة ترفض المدة السالبة', (await text(page,'#simResult')).includes('أدخل قدرة موجبة'));
