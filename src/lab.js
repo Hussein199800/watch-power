@@ -11,7 +11,11 @@ export function timePoints(times, values, maxGap = MAX_GAP_MS) {
   return out;
 }
 export function replayAt(samples, at, maxGap = MAX_GAP_MS) {
-  const i = samples.findLastIndex(s => s.ts <= at);
+  let low = 0, high = samples.length - 1, i = -1;
+  while (low <= high) {
+    const mid = (low + high) >>> 1;
+    if (samples[mid].ts <= at) { i = mid; low = mid + 1; } else high = mid - 1;
+  }
   if (i < 0) return null;
   const s = samples[i], next = samples[i + 1];
   if (s.ts === at) return s;

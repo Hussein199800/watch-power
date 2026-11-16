@@ -16,6 +16,7 @@ class UpdateRulesTest {
         assertFalse(UpdateRules.isAllowedUrl("https://github.com/other/Car/releases/download/v1/taqati.apk"))
         assertFalse(UpdateRules.isAllowedUrl("https://github.com/Hussein199800/watch-power/releases/download/../../x/evil.apk"))
         assertFalse(UpdateRules.isAllowedUrl("https://github.com/Hussein199800/watch-power/releases/download/v1/notes.txt"))
+        assertFalse(UpdateRules.isAllowedUrl("https://github.com/Hussein199800/Car/releases/download/v9/app.apk"))
         assertFalse(UpdateRules.isAllowedUrl(null))
     }
 

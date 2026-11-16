@@ -1481,7 +1481,7 @@ function replayMarkup(samples) {
   const end = new Date(new Date(start).setDate(new Date(start).getDate() + 1)).getTime() - 1;
   return `<section class="card" id="replay"><h2>إعادة مشاهدة اليوم</h2>
     <p class="hint">قراءات مسجّلة، دون استيفاء بين القيم. الفجوات الأكبر من 20 دقيقة فارغة. أوقات التنبيهات هي أوقات رصدها في السجل.</p>
-    <label>وقت المشاهدة <output id="replayTime"></output><input aria-label="وقت إعادة المشاهدة" id="replaySlider" type="range" min="${start}" max="${end}" step="1000" value="${state.replay.at}" style="width:100%;direction:ltr"></label>
+    <label>وقت المشاهدة <output id="replayTime"></output><input aria-label="وقت إعادة المشاهدة" id="replaySlider" type="range" min="${start}" max="${end}" step="1" value="${state.replay.at}" style="width:100%;direction:ltr"></label>
     <button class="btn ghost" id="replayPlay">تشغيل / إيقاف</button><div id="replayScene"></div><div id="replayEvents"></div></section>`;
 }
 function bindReplay(samples) {
@@ -1675,7 +1675,7 @@ function pageRange(kind) {
   const tr = r.trend?.cur.days && r.trend?.prev.days ? r.trend : null;
   const trendTag = (k, better) => { const c = tr && change(tr.cur[k], tr.prev[k], better); return c ? `<em class="trend ${c.cls}">${c.text}</em>` : ''; };
   const prevName = kind === 'week' ? 'الأسبوع السابق' : 'الشهر السابق';
-  return nav + replayMarkup(r.samples) + `
+  return nav + `
   <div class="stats">
     ${stat('إجمالي الإنتاج', fmt.kwh(t.pv), 'كيلوواط ساعة', 'c-amber', trendTag('pv', 'up'))}
     ${stat('إجمالي الاستهلاك', fmt.kwh(t.load), 'كيلوواط ساعة', 'c-sky', trendTag('load', 'down'))}
@@ -2374,7 +2374,7 @@ function ctlSection(c) {
     const act = activeSlot(now, saved.slots);
     status = `<p class="ctl-now"><b>الجدولة فعّالة</b> · المطلوب الآن: ${esc(itemLabel(items, act?.key ?? saved.defaultKey))}${n ? ` · التحويل التالي ${esc(fmt.day(dateOf(sLocalDay(n.at)), { weekday: 'long' }))} ${esc(fmt.time(n.at))} ← ${esc(itemLabel(items, n.key))}` : ''} · بتوقيت سوريا</p>`;
   } else if (saved.mode === 'smart') {
-    status = `<p class="ctl-now"><b>الإدارة الذكية فعّالة</b> · إلى ${esc(itemLabel(items, saved.gridKey))} عند ${saved.low}% أو أقل، والعودة إلى ${esc(itemLabel(items, saved.solarKey))} عند ${saved.target}%${ns.state?.lastNote ? ` · آخر فحص: ${esc(ns.state.lastNote)}` : ''}</p>`;
+    status = `<p class="ctl-now"><b>${saved.dryRun !== false ? 'الإدارة الذكية: تجربة دون أوامر' : 'الإدارة الذكية فعّالة'}</b> · إلى ${esc(itemLabel(items, saved.gridKey))} عند ${saved.low}% أو أقل، والعودة إلى ${esc(itemLabel(items, saved.solarKey))} عند ${saved.target}%${ns.state?.lastNote ? ` · آخر فحص: ${esc(ns.state.lastNote)}` : ''}</p>`;
   }
   const perms = saved.mode !== 'manual' && isNative ? `
     ${ns.exact === false ? `<p class="note warn">${icons.warn}<span>إذن «التنبيهات والتذكيرات» غير مفعّل، فقد يتأخر التحويل دقائق عن موعده.</span></p><button class="btn ghost wide" id="ctlExact">تفعيل التوقيت الدقيق</button>` : ''}
@@ -2427,9 +2427,9 @@ function ctlSection(c) {
   <h3 class="sec-h">نمط التحكم</h3>
   <div class="seg ctl-mode">${CTL_MODES.map(([k, l]) => `<button class="${e.mode === k ? 'on' : ''}" data-mode="${k}">${l}</button>`).join('')}</div>
   ${status}${perms}
-  ${e.mode === 'smart' ? `<section class="card"><label><input id="ctlDryRun" type="checkbox" ${e.dryRun !== false ? 'checked' : ''}> وضع تجربة: تسجيل القرارات وأسبابها دون إرسال أوامر</label><p class="hint">الحظر مفروض داخل محرك Kotlin. يُسجّل كل فحص، بما فيه سبب عدم اتخاذ قرار. إلغاء التجربة يسمح بالتنفيذ بعد الحفظ.</p></section>` : ''}
+  ${e.mode === 'smart' ? `<section class="card"><label><input id="ctlDryRun" type="checkbox" ${e.dryRun !== false ? 'checked' : ''}> وضع تجربة: تسجيل القرارات وأسبابها دون إرسال أوامر</label><p class="hint">لا تُرسل أوامر في هذا الوضع حتى عند إغلاق التطبيق. يُسجّل كل فحص وسببه. إلغاء التجربة والحفظ يسمح بالتنفيذ الحقيقي.</p></section>` : ''}
   ${editSchedule}${editSmart}
-  ${JSON.stringify({ ...e, tuned: undefined }) !== JSON.stringify(saved) ? `<button class="btn primary wide" id="ctlSave">${e.mode === 'manual' ? 'إيقاف التحكم التلقائي' : 'حفظ وتفعيل'}</button><button class="link pad" id="ctlCancel">تراجع عن التعديلات</button>` : ''}
+  ${JSON.stringify({ ...e, tuned: undefined }) !== JSON.stringify(saved) ? `<button class="btn primary wide" id="ctlSave">${e.mode === 'manual' ? 'إيقاف التحكم التلقائي' : e.mode === 'smart' && e.dryRun !== false ? 'حفظ التجربة' : 'حفظ وتفعيل'}</button><button class="link pad" id="ctlCancel">تراجع عن التعديلات</button>` : ''}
   ${!isNative && saved.mode !== 'manual' ? '<p class="note warn">' + icons.warn + '<span>التنفيذ التلقائي يعمل في تطبيق أندرويد فقط.</span></p>' : ''}
   ${logs.length ? `<h3 class="sec-h">سجل قرارات الجدولة والإدارة الذكية</h3><ul class="ctl-log card">${logs.map((x) => `
     <li class="${esc(x.status)}"><b>${esc(x.from || '؟')} ← ${esc(x.to)}</b><span>${{ simulated: 'تجربة — لم يُرسل أمر', confirmed: 'تأكّد من الجهاز', unconfirmed: 'لم يتأكد', rejected: 'مرفوض', error: 'لم يُرسل' }[x.status] || esc(x.status)}${x.error ? ' · ' + esc(x.error) : ''}</span><small>${esc(fmt.dateTime(x.at))} · ${x.by === 'schedule' ? 'الجدولة' : 'الإدارة الذكية'} · ${esc(x.reason || '')}</small></li>`).join('')}</ul>` : ''}`;

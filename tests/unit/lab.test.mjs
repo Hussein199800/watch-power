@@ -46,3 +46,12 @@ test('simulation rejects bad input and gates stale, absent and grid battery esti
  assert.equal(simulateDevice(m,{watts:100,minutes:60},now).battery,null);
  assert.equal(simulateDevice({...m,ratedW:null},{watts:100,minutes:60},now).headroomW,null);
 });
+
+test('identity and update channel are independent of the source app', async () => {
+ const fs = await import('node:fs');
+ const { REPO, fetchLatest } = await import('../../src/update.js');
+ assert.equal(REPO,'Hussein199800/watch-power');
+ assert.match(fs.readFileSync('android/app/build.gradle','utf8'),/applicationId "com.hussein.watchpower"/);
+ const release = await fetchLatest(async () => ({ok:true,json:async()=>({tag_name:'v9.0.0',assets:[{name:'evil.apk',browser_download_url:'https://github.com/Hussein199800/Car/releases/download/v9.0.0/evil.apk'}]})}));
+ assert.equal(release,null);
+});

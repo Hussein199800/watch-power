@@ -800,7 +800,7 @@ const noHScroll = (page) => page.evaluate(() => document.documentElement.scrollW
       const sm = await page.evaluate(() => JSON.parse(localStorage.getItem('watchpower.ctlNative')));
       check('الإدارة الذكية تبدأ بتجربة محظورة التنفيذ في Kotlin', sm.dryRun === true);
       check('الإدارة الذكية تُفعَّل بحدودها ووضعيها', sm.mode === 'smart' && sm.low === 40 && sm.target === 60 && sm.gridKey === '0' && sm.solarKey === '2', JSON.stringify(sm));
-      check('نمط واحد فعّال: تفعيل الذكية أوقف الجدولة', (await text(page, '.ctl-now')).includes('الإدارة الذكية فعّالة') && !(await text(page, '.ctl-now')).includes('الجدولة'));
+      check('نمط واحد فعّال: تفعيل الذكية أوقف الجدولة', (await text(page, '.ctl-now')).includes('الإدارة الذكية: تجربة دون أوامر') && !(await text(page, '.ctl-now')).includes('الجدولة'));
       await page.click('[data-mode="manual"]'); await page.click('#ctlSave'); await page.click('.modal [data-v="1"]'); await page.waitForTimeout(300);
       check('العودة للتحكم اليدوي توقف التلقائي', (await page.evaluate(() => JSON.parse(localStorage.getItem('watchpower.ctlNative')).mode)) === 'manual' && !(await page.$('.ctl-now')));
       check('بلا أخطاء JavaScript (التحكم)', page.errors.length === 0, page.errors.join(' | '));
