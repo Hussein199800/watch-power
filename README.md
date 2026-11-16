@@ -26,7 +26,7 @@ cd android
 
 ## APK والتحديثات
 
-[الإصدارات التجريبية وملفات APK](https://github.com/Hussein199800/watch-power/releases). يبني GitHub Actions الاختبارات والواجهة ومحرك Kotlin وLint ثم APK تجريبياً ويُنشر كإصدار أولي مرتبط بالتزامه مع SHA-256.
+[تحميل APK التجريبي 1.0.0](https://github.com/Hussein199800/watch-power/releases/download/lab-1.0.0-b4ed75d/watch-power-lab-debug.apk) · [الإصدارات](https://github.com/Hussein199800/watch-power/releases) · [نتائج الاختبار وحدوده](VALIDATION.md). يبني GitHub Actions الاختبارات والواجهة ومحرك Kotlin وLint ثم APK تجريبياً ويُنشر كإصدار أولي مرتبط بالتزامه مع SHA-256.
 
 التحميل داخل التطبيق محصور بإصدارات `watch-power` في JavaScript وKotlin، مع التحقق من هوية الحزمة ورقم الإصدار والتوقيع. ملفات Debug التجريبية ليست قناة إنتاجية؛ مفتاح Debug على مشغّل Actions غير دائم. يجب إعداد توقيع دائم خاص بهذا التطبيق وإصدار موقّع قبل الاعتماد على تحديثات متتابعة. لا تُستخدم مفاتيح Car أو أسراره.
 
