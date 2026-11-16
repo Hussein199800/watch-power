@@ -705,6 +705,7 @@ async function refresh(manual = false) {
     // نعيد الرسم فقط للصفحات التي تعرض القراءة الحية حتى لا تُفقد حالة الصفحات الأخرى
     if (state.tab === 'home' || (state.tab === 'reports' && state.page === 'advisor')) render();
     else renderHeader();
+    if (state.tab === 'more' && leaf() === 'calc') bindSimulation(calcHelpers());
   }
 }
 
@@ -1189,7 +1190,7 @@ function pageLoad(m) {
     ${cardH('نسبة الحمل من قدرة الإنفرتر', '', `<b>${m.loadPct ?? '—'}%</b>`)}
     <div class="bar"><i class="${pct >= state.prefs.overloadPct ? 'hot' : pct >= 50 ? 'warm' : ''}" style="width:${pct}%"></i></div>
     <div class="bar-legend"><span>0</span><span>${rated ? `القدرة القصوى ${rated} واط` : ''}</span></div>
-    ${rated && m.outW !== null ? `<p class="hint">المتبقي المتاح للتشغيل: <b>${fmt.w(Math.max(0, rated - m.outW))}</b>${infoBtn('loadLeft')}</p>` : ''}
+    ${!m.stale && rated && m.outW !== null ? `<p class="hint">المتبقي المتاح للتشغيل: <b>${fmt.w(Math.max(0, rated - m.outW))}</b>${infoBtn('loadLeft')}</p>` : ''}
   </section>
   <div class="stats">
     ${stat('القدرة الفعلية', numAr(m.outW), 'واط', 'c-sky')}
@@ -1229,7 +1230,7 @@ function pageSolar(m) {
   const pv2 = m.pv2V !== null || m.pv2W !== null;
   const kwp = pvKwp();
   return `
-  ${hero(icons.panel, 'c-amber', 'إنتاج الألواح الآن', fmt.w(m.pvW), m.pvW > 5 && !m.stale ? (kwp ? `${Math.round((m.pvW / (kwp * 1000)) * 100)}% من قدرة ألواحك` : 'الألواح تنتج الآن') : 'لا يوجد إنتاج حالياً', kwp && m.pvW > 5 && !m.stale ? 'pvShare' : 'solarNow')}
+  ${hero(icons.panel, 'c-amber', 'إنتاج الألواح الآن', fmt.w(m.pvW), m.pvW > 5 && !m.stale ? (kwp ? `${Math.round((m.pvW / (kwp * 1000)) * 100)}% من قدرة ألواحك` : 'الألواح تنتج الآن') : m.stale ? 'آخر قيمة مسجّلة — لا تقدير حي' : 'لا يوجد إنتاج حالياً', kwp && m.pvW > 5 && !m.stale ? 'pvShare' : 'solarNow')}
   <div class="stats">
     ${stat('إنتاج اليوم', m.todayWh !== null ? fmt.kwh(m.todayWh / 1000) : '—', 'كيلوواط ساعة', 'c-amber', '', 'todayWh')}
     ${stat('الإنتاج الكلي', m.totalWh !== null ? fmt.kwh(m.totalWh / 1000) : '—', state.plant?.install ? `كيلوواط ساعة · منذ ${String(state.plant.install).slice(0, 4)}` : 'كيلوواط ساعة', 'c-green', '', 'totalWh')}

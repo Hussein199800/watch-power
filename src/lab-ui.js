@@ -37,5 +37,5 @@ export function bindSimulation(h) {
     }
     h.$('#simResult').innerHTML = html;
   };
-  root.querySelectorAll('input').forEach(el => el.addEventListener('input', update)); update();
+  root.querySelectorAll('input').forEach(el => el.oninput = update); update();
 }
