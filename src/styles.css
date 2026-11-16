@@ -1070,3 +1070,12 @@ table.cmp tr.part { opacity: .55; }
 .sugg { border-color: color-mix(in srgb, var(--pri) 35%, var(--line)); }
 .sugg .wn li { font-size: calc(13.5px * var(--fs, 1)); color: var(--mute); }
 .sugg .wn b { color: var(--txt); }
+
+/* Watch Power Lab: explicit units and bidirectional numeric results. */
+#simulation h2 { margin-bottom: 16px; }
+.sim-check { display: flex; align-items: center; gap: 10px; padding-block: 12px; }
+.sim-check input { flex-shrink: 0; }
+#simResult { margin-block: 12px; }
+.sim-row { display: flex; justify-content: space-between; gap: 12px; align-items: baseline; padding-block: 10px; border-bottom: 1px solid var(--line); }
+.sim-row > b { text-align: end; }
+.sim-row small { color: var(--muted); font-weight: normal; }

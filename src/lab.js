@@ -39,7 +39,7 @@ export function simulateDevice(m, { watts, minutes, alreadyOn = false, batteryAh
   const capWh = batteryAh * m.ratedV;
   const projectedBatW = m.batW - addedW / efficiency;
   const projectedSoc = m.soc + projectedBatW * minutes / 60 / capWh * 100;
-  result.battery = { projectedBatW, projectedSoc, extraSocDrop: addedW / efficiency * minutes / 60 / capWh * 100,
+  result.battery = { projectedBatW, projectedSoc: Math.max(0, Math.min(100, projectedSoc)), extraSocDrop: addedW / efficiency * minutes / 60 / capWh * 100,
     belowReserve: projectedSoc < cutoffSoc, outsideCapacity: projectedSoc < 0 || projectedSoc > 100 };
   return result;
 }

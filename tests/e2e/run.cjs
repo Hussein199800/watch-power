@@ -864,7 +864,7 @@ const noHScroll = (page) => page.evaluate(() => document.documentElement.scrollW
       await page.fill('#simWatts','٩٠٠'); await page.fill('#simMinutes','١٢٠');
       check('المحاكاة تحسب القدرة والمدة بأرقام عربية', (await text(page,'#simResult')).includes('1800') === false && (await text(page,'#simResult')).includes('1.80') && (await text(page,'#simResult')).includes('2630.00'));
       await page.check('#simAlreadyOn');
-      check('الجهاز المشمول في الحمل لا يُحتسب مرتين', (await text(page,'#simResult')).includes('1730.00') && (await text(page,'#simResult')).includes('الإضافة: 0.00'));
+      check('الجهاز المشمول في الحمل لا يُحتسب مرتين', (await text(page,'#simResult')).includes('1730.00') && (await text(page,'[data-sim-value=addedW]')) === '0.00');
       await page.fill('#simMinutes','-1');
       check('المحاكاة ترفض المدة السالبة', (await text(page,'#simResult')).includes('أدخل قدرة موجبة'));
       await page.fill('#simMinutes','120');

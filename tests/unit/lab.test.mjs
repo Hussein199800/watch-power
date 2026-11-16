@@ -55,3 +55,8 @@ test('identity and update channel are independent of the source app', async () =
  const release = await fetchLatest(async () => ({ok:true,json:async()=>({tag_name:'v9.0.0',assets:[{name:'evil.apk',browser_download_url:'https://github.com/Hussein199800/Car/releases/download/v9.0.0/evil.apk'}]})}));
  assert.equal(release,null);
 });
+
+test('battery estimates respect physical SOC bounds when duration exceeds capacity', () => {
+ const r = simulateDevice(m,{watts:5000,minutes:1440,batteryAh:200},now);
+ assert.equal(r.battery.projectedSoc,0);assert.equal(r.battery.outsideCapacity,true);
+});
