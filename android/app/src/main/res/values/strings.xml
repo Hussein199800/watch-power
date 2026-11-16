@@ -1,0 +1,9 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">طاقتي لاب</string>
+    <string name="title_activity_main">طاقتي لاب</string>
+    <string name="package_name">com.hussein.watchpower</string>
+    <string name="custom_url_scheme">com.hussein.watchpower</string>
+    <string name="widget_empty">طاقتي لاب</string>
+    <string name="widget_desc">نسبة البطارية والحمل وإنتاج الألواح</string>
+</resources>

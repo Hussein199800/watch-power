@@ -1,0 +1,10 @@
+{
+  "appId": "com.hussein.watchpower",
+  "appName": "طاقتي لاب",
+  "webDir": "www",
+  "android": { "backgroundColor": "#070d1d" },
+  "plugins": {
+    "CapacitorHttp": { "enabled": true },
+    "LocalNotifications": { "iconColor": "#fbbf24" }
+  }
+}
