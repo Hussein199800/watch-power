@@ -2,11 +2,30 @@ name: Watch Power Lab verification and APK
 on:
   push:
     branches: ['main']
+    paths-ignore: ['**.md']
   workflow_dispatch:
 permissions:
   contents: write
 jobs:
-  verify-build:
+  web:
+    if: github.repository == 'Hussein199800/watch-power'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm test
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:e2e
+      - uses: actions/upload-artifact@v5
+        if: always()
+        with:
+          name: watch-power-lab-browser-results
+          path: tests/e2e/out/
+  android:
     if: github.repository == 'Hussein199800/watch-power'
     runs-on: ubuntu-latest
     steps:
@@ -20,20 +39,15 @@ jobs:
           distribution: temurin
           java-version: 21
       - run: npm ci
-      - run: npm test
-      - run: npx playwright install --with-deps chromium
-      - run: npm run test:e2e
       - run: npm run sync
-      - name: Android engine tests and experimental APK
+      - name: Android engine tests, Lint and experimental APK
         working-directory: android
         run: chmod +x gradlew && ./gradlew testDebugUnitTest lintDebug assembleDebug --no-daemon
       - uses: actions/upload-artifact@v5
         if: always()
         with:
-          name: watch-power-lab-results
-          path: |
-            android/app/build/reports/
-            tests/e2e/out/
+          name: watch-power-lab-android-results
+          path: android/app/build/reports/
       - name: Package experimental APK
         run: |
           cp android/app/build/outputs/apk/debug/app-debug.apk watch-power-lab-debug.apk
@@ -42,7 +56,15 @@ jobs:
         with:
           name: watch-power-lab-apk
           path: watch-power-lab-debug.apk*
-      - name: Publish experimental download
+  publish:
+    needs: [web, android]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/download-artifact@v5
+        with:
+          name: watch-power-lab-apk
+      - name: Publish verified experimental download
         env:
           GH_TOKEN: ${{ github.token }}
         run: |

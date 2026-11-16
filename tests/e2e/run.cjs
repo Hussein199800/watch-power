@@ -51,6 +51,7 @@ let failures = 0;
 const results = [];
 function check(name, cond, info = '') {
   results.push(`${cond ? '✓' : '✗'} ${name}${!cond && info ? ' — ' + info : ''}`);
+  console.log(results[results.length-1]);
   if (!cond) failures++;
 }
 

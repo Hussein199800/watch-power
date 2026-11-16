@@ -446,10 +446,11 @@ function openTour() {
 
 // ما الجديد في هذا الإصدار: يظهر مرة واحدة بعد التحديث
 const WHATS_NEW = [
-  'جدولة مرنة لأولوية مصدر الطاقة: قواعد بقدر ما تريد، لكل منها أيامها وساعاتها ووضعها، أو لمرة واحدة بتاريخ، بتوقيت سوريا، وتعمل والتطبيق مغلق.',
-  'إدارة ذكية اختيارية: تحويل للشبكة عند حد للبطارية تختاره، وعودة عند نسبة مستهدفة، بلا تذبذب ولا قرار على قراءة قديمة.',
-  'كل تحويل تلقائي يُتحقق منه بقراءة الجهاز، ويُسجَّل ويصلك به إشعار. والتحويل اليدوي يوقف التلقائي مؤقتاً.',
-  'تقدير الأسبوعين القادمين، وعدّاد كهرباء الشبكة، والتحويل اليدوي المتحقق منه.',
+  'طاقتي لاب مستقل ويمكن تثبيته بجانب طاقتي. تحديثاته من watch-power حصراً.',
+  'محاكاة جهاز على الحمل الحالي، مع حساب الطاقة وهامش الإنفرتر وتقدير البطارية عند توفر البيانات.',
+  'إعادة مشاهدة اليوم من القراءات المسجلة، وفجوات صريحة على محور زمني حقيقي، مع التنبيهات في أوقاتها.',
+  'تجربة الإدارة الذكية مفعّلة افتراضياً: تسجل القرارات والأسباب دون إرسال أوامر، بحظر داخل Kotlin.',
+  'صلاحية القراءات تتجدد حتى عند فشل الاتصال، مع إصلاح تداخل الجدولة بالدقيقة وعبر منتصف الليل.',
 ];
 function openWhatsNew() {
   store.set('seenVersion', VERSION);
@@ -1292,7 +1293,7 @@ function barChart(id, labels, series, opts = {}) {
   if (!el) return;
   charts.push(new Chart(el, {
     type: 'bar',
-    data: { labels, datasets: series.map((d) => ({ label: d.label, data: timePoints(labels, d.data), backgroundColor: d.color, borderRadius: 6, maxBarThickness: 22 })) },
+    data: { labels, datasets: series.map((d) => ({ label: d.label, data: d.data, backgroundColor: d.color, borderRadius: 6, maxBarThickness: 22 })) },
     options: chartOpts(series.length > 1, opts),
   }));
 }
@@ -1395,7 +1396,7 @@ function pageYear() {
   const best = used.reduce((b, x) => (!b || x.kwh > b.kwh ? x : b), null);
   const price = state.prefs.price;
   if (!used.length) return nav + '<div class="empty">لا يوجد إنتاج مسجّل في هذه السنة.</div>';
-  return nav + replayMarkup(r.samples) + `
+  return nav + `
   <div class="stats">
     ${stat('إنتاج السنة', fmt.kwh(sum), 'كيلوواط ساعة', 'c-amber', '', 'year')}
     ${stat('أفضل شهر', best ? MONTHS[best.month - 1] : '—', best ? `${fmt.kwh(best.kwh)} ك.و.س` : '', 'c-green')}
