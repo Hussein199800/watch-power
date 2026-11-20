@@ -2,7 +2,7 @@ name: Watch Power Lab verification and APK
 on:
   push:
     branches: ['main']
-    paths-ignore: ['**.md']
+    paths-ignore: ['**.md', 'wear/**', '.github/workflows/wear.yml']
   workflow_dispatch:
 permissions:
   contents: write

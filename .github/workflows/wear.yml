@@ -1,0 +1,38 @@
+name: Taqati Wear (Galaxy Watch tile) APK
+on:
+  push:
+    branches: ['main', 'wear-tile']
+    paths: ['wear/**', '.github/workflows/wear.yml']
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  wear:
+    if: github.repository == 'Hussein199800/watch-power'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: 21
+      - name: Unit tests and APK
+        working-directory: wear
+        run: chmod +x gradlew && ./gradlew testDebugUnitTest assembleDebug --no-daemon
+      - name: Package
+        run: |
+          cp wear/app/build/outputs/apk/debug/app-debug.apk taqati-wear.apk
+          sha256sum taqati-wear.apk > taqati-wear.apk.sha256
+      - uses: actions/upload-artifact@v5
+        with:
+          name: taqati-wear-apk
+          path: taqati-wear.apk*
+      # وسم ثابت حتى يبقى رابط التحميل واحداً: .../releases/download/wear-latest/taqati-wear.apk
+      - name: Publish wear-latest
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release delete wear-latest --yes --cleanup-tag || true
+          gh release create wear-latest taqati-wear.apk taqati-wear.apk.sha256 --prerelease \
+            --title "طاقتي للساعة — ${GITHUB_SHA::7}" --target "$GITHUB_SHA" \
+            --notes "Tile الطاقة الشمسية لساعات Wear OS. نسخة تجريبية موقّعة بمفتاح تجريبي علني (wear/keystore). التعليمات: wear/README.md"

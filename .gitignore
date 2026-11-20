@@ -5,3 +5,8 @@ www/build/
 *.keystore
 keystore.properties
 tests/e2e/out/
+wear/.gradle/
+wear/build/
+wear/app/build/
+wear/local.properties
+!wear/keystore/wear-debug.keystore
